@@ -953,10 +953,6 @@
   </ItemGroup>
   <ItemGroup>
     <Library Include="dependencies\lib\glfw3.lib" />
-    <Library Include="dependencies\lib\Release\Win32\glew32.lib" />
-    <Library Include="dependencies\lib\Release\Win32\glew32s.lib" />
-    <Library Include="dependencies\lib\Release\x64\glew32.lib" />
-    <Library Include="dependencies\lib\Release\x64\glew32s.lib" />
   </ItemGroup>
   <ItemGroup>
     <None Include="dependencies\include\glm\detail\func_common.inl">
