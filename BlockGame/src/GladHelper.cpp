@@ -8,6 +8,7 @@ namespace GladHelper {
             return false;
 
         glEnable(GL_DEPTH_TEST); // faces unseen by cam arent rendered
+        glDepthFunc(GL_LESS);
 
         // culls backfaces
         glEnable(GL_CULL_FACE);

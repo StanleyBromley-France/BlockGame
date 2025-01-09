@@ -37,6 +37,9 @@ GLFWwindow* GLFWHelper::initialiseAndConfigure() {
         return nullptr;
     }
 
+    glFrustum(-1.0, 1.0, -1.0, 1.0, 1.0, 1000.0);  // Near plane at 1.0, far plane at 1000.0
+
+
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
@@ -44,6 +47,8 @@ GLFWwindow* GLFWHelper::initialiseAndConfigure() {
 
     // hides mouse and takes control of the mouse input
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    glfwSwapInterval(0);
 
     return window;
 }
