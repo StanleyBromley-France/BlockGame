@@ -13,7 +13,25 @@
 #include <algorithm>
 #include <iostream>
 
-#include "CubeInstance.h"
+#include "Biomes.h"
+#include "Chunk.h"
+
+double lastTime = 0.0;
+int frameCount = 0;
+double frameTime = 0.0;
+
+void calculateFPS(GLFWwindow* window) {
+    double currentTime = glfwGetTime();
+    frameTime = currentTime - lastTime;
+    frameCount++;
+    // Update FPS every second
+    if (frameTime >= 1.0) {
+        std::cout << "FPS: " << frameCount << std::endl;
+        frameCount = 0;
+        lastTime = currentTime;
+    }
+}
+
 
 
 int main()
@@ -35,38 +53,44 @@ int main()
         return -1;
     }
 
-    const int gridSize = 10;
-    const float spacing = 1.0f;
-    const float noiseScale = 1.0f;
+    // Define the chunks in a 5x5 grid with diverse biomes
+    // Row 1 (top row) - mixed biomes
+    Chunk desertChunk1 = Chunk::Chunk(glm::vec3(0.0f, 0.0f, 0.0f), Biomes::desertBiome);
+    Chunk hillyChunk1 = Chunk::Chunk(glm::vec3(16.0f, 0.0f, 0.0f), Biomes::hillyBiome);
+    Chunk mountainousChunk1 = Chunk::Chunk(glm::vec3(32.0f, 0.0f, 0.0f), Biomes::mountainousBiome);
+    Chunk desertChunk2 = Chunk::Chunk(glm::vec3(48.0f, 0.0f, 0.0f), Biomes::desertBiome);
+    Chunk hillyChunk2 = Chunk::Chunk(glm::vec3(64.0f, 0.0f, 0.0f), Biomes::hillyBiome);
 
-    // creates a 3D array of Cube objects
-    CubeInstance cubes[gridSize][gridSize][5]; // fixed maximum height of 5
+    // Row 2 - mixed biomes
+    Chunk hillyChunk3 = Chunk::Chunk(glm::vec3(0.0f, 0.0f, 16.0f), Biomes::hillyBiome);
+    Chunk mountainousChunk2 = Chunk::Chunk(glm::vec3(16.0f, 0.0f, 16.0f), Biomes::mountainousBiome);
+    Chunk desertChunk3 = Chunk::Chunk(glm::vec3(32.0f, 0.0f, 16.0f), Biomes::desertBiome);
+    Chunk hillyChunk4 = Chunk::Chunk(glm::vec3(48.0f, 0.0f, 16.0f), Biomes::hillyBiome);
+    Chunk mountainousChunk3 = Chunk::Chunk(glm::vec3(64.0f, 0.0f, 16.0f), Biomes::mountainousBiome);
 
-    // create and configure the noise generator
-    FastNoiseLite noise;
-    noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);  // chooses the noise type
-    noise.SetFrequency(0.1f);  // adjusts the frequency for the smoothness of the noise
-    noise.SetSeed(12345);  // sets a seed for reproducibility
+    // Row 3 - mixed biomes
+    Chunk mountainousChunk4 = Chunk::Chunk(glm::vec3(0.0f, 0.0f, 32.0f), Biomes::mountainousBiome);
+    Chunk desertChunk4 = Chunk::Chunk(glm::vec3(16.0f, 0.0f, 32.0f), Biomes::desertBiome);
+    Chunk hillyChunk5 = Chunk::Chunk(glm::vec3(32.0f, 0.0f, 32.0f), Biomes::hillyBiome);
+    Chunk mountainousChunk5 = Chunk::Chunk(glm::vec3(48.0f, 0.0f, 32.0f), Biomes::mountainousBiome);
+    Chunk desertChunk5 = Chunk::Chunk(glm::vec3(64.0f, 0.0f, 32.0f), Biomes::desertBiome);
 
-    // initialises the cubes with positions and random heights
-    for (int x = 0; x < gridSize; ++x) {
-        for (int z = 0; z < gridSize; ++z) {
-            // generates a noise value for this (x, z) coordinate
-            float noiseValue = noise.GetNoise(x * noiseScale, z * noiseScale);
+    // Row 4 - mixed biomes
+    Chunk desertChunk6 = Chunk::Chunk(glm::vec3(0.0f, 0.0f, 48.0f), Biomes::desertBiome);
+    Chunk hillyChunk6 = Chunk::Chunk(glm::vec3(16.0f, 0.0f, 48.0f), Biomes::hillyBiome);
+    Chunk mountainousChunk6 = Chunk::Chunk(glm::vec3(32.0f, 0.0f, 48.0f), Biomes::mountainousBiome);
+    Chunk desertChunk7 = Chunk::Chunk(glm::vec3(48.0f, 0.0f, 48.0f), Biomes::desertBiome);
+    Chunk hillyChunk7 = Chunk::Chunk(glm::vec3(64.0f, 0.0f, 48.0f), Biomes::hillyBiome);
 
-            // maps noise value from [-1, 1] to [0, 5] for height
-            int height = static_cast<int>((noiseValue + 1.0f) * 2.5f);
+    // Row 5 (bottom row) - mixed biomes
+    Chunk hillyChunk8 = Chunk::Chunk(glm::vec3(0.0f, 0.0f, 64.0f), Biomes::hillyBiome);
+    Chunk mountainousChunk7 = Chunk::Chunk(glm::vec3(16.0f, 0.0f, 64.0f), Biomes::mountainousBiome);
+    Chunk desertChunk8 = Chunk::Chunk(glm::vec3(32.0f, 0.0f, 64.0f), Biomes::desertBiome);
+    Chunk hillyChunk9 = Chunk::Chunk(glm::vec3(48.0f, 0.0f, 64.0f), Biomes::hillyBiome);
+    Chunk mountainousChunk8 = Chunk::Chunk(glm::vec3(64.0f, 0.0f, 64.0f), Biomes::mountainousBiome);
 
-            // clamps the height to the range [0, 5]
-            //height = std::clamp(height, 0, 5);
 
-            // populates the cubes up to the random height
-            for (int y = 0; y < height; ++y) {
-                glm::vec3 position(x * spacing, y * spacing, z * spacing);
-                cubes[x][z][y] = CubeInstance(position);
-            }
-        }
-    }
+
     // render loop
     while (!glfwWindowShouldClose(window))
     {
@@ -77,26 +101,45 @@ int main()
 
         GladHelper::ClearScreen();
 
-        for (auto& plane : cubes) {
-            for (auto& row : plane) {
-                for (auto& cube : row) {
-                    cube.Render();
-                }
-            }
-        }
+        // Render all chunks in the 5x5 grid
+        desertChunk1.RenderChunk();
+        hillyChunk1.RenderChunk();
+        mountainousChunk1.RenderChunk();
+        desertChunk2.RenderChunk();
+        hillyChunk2.RenderChunk();
+
+        hillyChunk3.RenderChunk();
+        mountainousChunk2.RenderChunk();
+        desertChunk3.RenderChunk();
+        hillyChunk4.RenderChunk();
+        mountainousChunk3.RenderChunk();
+
+        mountainousChunk4.RenderChunk();
+        desertChunk4.RenderChunk();
+        hillyChunk5.RenderChunk();
+        mountainousChunk5.RenderChunk();
+        desertChunk5.RenderChunk();
+
+        desertChunk6.RenderChunk();
+        hillyChunk6.RenderChunk();
+        mountainousChunk6.RenderChunk();
+        desertChunk7.RenderChunk();
+        hillyChunk7.RenderChunk();
+
+        hillyChunk8.RenderChunk();
+        mountainousChunk7.RenderChunk();
+        desertChunk8.RenderChunk();
+        hillyChunk9.RenderChunk();
+        mountainousChunk8.RenderChunk();
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        calculateFPS(window);
     }
 
-    for (auto& plane : cubes) {
-        for (auto& row : plane) {
-            for (auto& cube : row) {
-                cube.DeAllocate();
-            }
-        }
-    }
+    CubeMesh::GetInstance().GetMeshBuffers().DeAllocate();
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     glfwTerminate();

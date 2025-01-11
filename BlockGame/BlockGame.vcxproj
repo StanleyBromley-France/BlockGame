@@ -137,6 +137,7 @@
   <ItemGroup>
     <ClCompile Include="dependencies\include\glm\detail\glm.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="src\Chunk.cpp" />
     <ClCompile Include="src\CubeInstance.cpp" />
     <ClCompile Include="src\CubeMesh.cpp" />
     <ClCompile Include="src\GladHelper.cpp" />
@@ -443,6 +444,8 @@
     <ClInclude Include="dependencies\include\GL\wglew.h" />
     <ClInclude Include="dependencies\include\KHR\khrplatform.h" />
     <ClInclude Include="dependencies\include\STB\stb_image.h" />
+    <ClInclude Include="src\Biomes.h" />
+    <ClInclude Include="src\Chunk.h" />
     <ClInclude Include="src\CubeInstance.h" />
     <ClInclude Include="src\CubeMesh.h" />
     <ClInclude Include="src\GladHelper.h" />
