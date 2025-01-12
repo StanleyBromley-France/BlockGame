@@ -17,7 +17,6 @@ public:
     void DeAllocate();
 private:
     glm::vec3 position;
-    CubeMesh* Mesh;
 };
 
 #endif

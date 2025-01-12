@@ -1,12 +1,5 @@
 #include "CubeMesh.h"
 
-// static method to get the singleton instance
-CubeMesh& CubeMesh::GetInstance()
-{
-    static CubeMesh instance;
-    return instance;
-}
-
 // sets up cube model class, called first time getInstance is run
 CubeMesh::CubeMesh() : Shader("shaders/vertex_shader.glsl", "shaders/fragment_shader.glsl")
 {

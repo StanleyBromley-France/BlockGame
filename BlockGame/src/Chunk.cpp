@@ -22,6 +22,7 @@ Chunk::Chunk(glm::vec3 position, Biomes::Biome currentBiome) : chunkPos(position
         }
     }
 
+
     // Initialises the cubes with positions and random heights
     for (int x = 0; x < chunkSize; ++x) {
         for (int z = 0; z < chunkSize; ++z) {
@@ -37,14 +38,48 @@ Chunk::Chunk(glm::vec3 position, Biomes::Biome currentBiome) : chunkPos(position
             for (int y = 0; y < height; ++y) {
                 glm::vec3 position(x * spacing, y * spacing, z * spacing);
                 cubes[x][z][y] = CubeInstance(position + chunkPos);
+
+                glm::mat4 model = glm::mat4(1.0f);
+                model = glm::translate(model, position + chunkPos);
+                modelMatrices.push_back(model);  // Add the model matrix to the vector
             }
         }
     }
+
+    Mesh = CubeMesh();
+
+    // configure instanced array
+    // -------------------------
+    glGenBuffers(1, &chunkBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, chunkBuffer);
+
+    // pass the modelMatrices vector to OpenGL
+    glBufferData(GL_ARRAY_BUFFER, modelMatrices.size() * sizeof(glm::mat4), modelMatrices.data(), GL_STATIC_DRAW);
+
+    glBindVertexArray(Mesh.GetMeshBuffers().getVAO());
+
+    // set attribute pointers for matrix (4 times vec4)
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)0);
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(sizeof(glm::vec4)));
+    glEnableVertexAttribArray(5);
+    glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(2 * sizeof(glm::vec4)));
+    glEnableVertexAttribArray(6);
+    glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void*)(3 * sizeof(glm::vec4)));
+
+    glVertexAttribDivisor(3, 1);
+    glVertexAttribDivisor(4, 1);
+    glVertexAttribDivisor(5, 1);
+    glVertexAttribDivisor(6, 1);
+
+    glBindVertexArray(0);
 }
 
 void Chunk::RenderChunk()
 {
-    Shader& shader = CubeMesh::GetInstance().GetShader();
+    Shader& shader = Mesh.GetShader();
+
     // activates shader
     shader.use();
 
@@ -56,14 +91,14 @@ void Chunk::RenderChunk()
     view = GLFWHelper::LookAt();
     shader.SetMat4("view", view);
 
-    // render cube
-    glBindVertexArray(CubeMesh::GetInstance().GetMeshBuffers().getVAO());
+    glBindVertexArray(Mesh.GetMeshBuffers().getVAO());
 
-    for (int x = 0; x < chunkSize; ++x) {
-        for (int z = 0; z < chunkSize; ++z) {
-            for (int y = 0; y < chunkHeight; ++y) {
-                cubes[x][z][y].Render();  // Render each cube
-            }
-        }
-    }
+    // Render the chunk using instanced drawing
+    glDrawElementsInstanced(GL_TRIANGLES, static_cast<unsigned int>(36), GL_UNSIGNED_INT, 0, modelMatrices.size());
+    glBindVertexArray(0);
+}
+
+void Chunk::Deallocate()
+{
+    Mesh.GetMeshBuffers().DeAllocate();
 }
