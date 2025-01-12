@@ -114,7 +114,7 @@ void GLFWHelper::processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 
-    float camSpeed = 5;
+    float camSpeed = 100;
     // for moving camera with WASD keys
     float cameraSpeed = static_cast<float>(camSpeed * deltaTime);
 

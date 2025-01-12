@@ -596,11 +596,15 @@
     <None Include="dependencies\include\glm\gtx\wrap.inl" />
     <None Include="glew32.dll" />
     <None Include="shaders\fragment_shader.glsl" />
+    <None Include="shaders\frag_single_texture.glsl" />
     <None Include="shaders\vertex_shader.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="awesomeface.png" />
     <Image Include="container.jpg" />
+    <Image Include="images\dirt.jpg" />
+    <Image Include="images\sand.jpg" />
+    <Image Include="images\stone.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

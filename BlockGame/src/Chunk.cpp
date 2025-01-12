@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <cstdlib>
 
-Chunk::Chunk(glm::vec3 position, Biomes::Biome currentBiome) : chunkPos(position) {
+Chunk::Chunk(glm::vec3 position, Biomes::Biome currentBiome) : chunkPos(position), currentBiome(currentBiome){
     const float spacing = 1.0f;
 
     // Create and configure the noise generator
@@ -78,6 +78,10 @@ Chunk::Chunk(glm::vec3 position, Biomes::Biome currentBiome) : chunkPos(position
 
 void Chunk::RenderChunk()
 {
+    Mesh.SwitchTexture(currentBiome.texture);
+
+    glBindVertexArray(Mesh.GetMeshBuffers().getVAO());
+
     Shader& shader = Mesh.GetShader();
 
     // activates shader
@@ -91,7 +95,6 @@ void Chunk::RenderChunk()
     view = GLFWHelper::LookAt();
     shader.SetMat4("view", view);
 
-    glBindVertexArray(Mesh.GetMeshBuffers().getVAO());
 
     // Render the chunk using instanced drawing
     glDrawElementsInstanced(GL_TRIANGLES, static_cast<unsigned int>(36), GL_UNSIGNED_INT, 0, modelMatrices.size());

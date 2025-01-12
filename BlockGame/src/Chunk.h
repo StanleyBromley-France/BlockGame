@@ -17,6 +17,7 @@ public:
 	void Deallocate();
 private:
 	CubeMesh Mesh;
+	Biomes::Biome currentBiome;
 	std::vector<glm::mat4> modelMatrices;
 	glm::vec3 chunkPos;
 	unsigned int chunkBuffer;

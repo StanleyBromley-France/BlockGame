@@ -12,8 +12,22 @@ public:
     Shader& GetShader();
     GladHelper::MeshBuffers& GetMeshBuffers();
 
+    enum class Texture
+    {
+        SAND,
+        DIRT,
+        STONE
+    };
+
+    void SwitchTexture(Texture texture);
+
 private:
     Shader Shader;
     GladHelper::MeshBuffers MeshBuffers;
+
+    unsigned int sandTexture;
+    unsigned int dirtTexture;
+    unsigned int stoneTexture;
+
 };
 #endif
