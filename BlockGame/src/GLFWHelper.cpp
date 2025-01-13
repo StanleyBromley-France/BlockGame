@@ -110,20 +110,34 @@ void GLFWHelper::framebuffer_size_callback(GLFWwindow* window, int width, int he
 }
 
 void GLFWHelper::processInput(GLFWwindow* window) {
-    // for closing window using escape key
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
+    }
 
-    float camSpeed = 100;
-    // for moving camera with WASD keys
-    float cameraSpeed = static_cast<float>(camSpeed * deltaTime);
+    handleMovementInput(window);
+}
 
+void GLFWHelper::handleMovementInput(GLFWwindow* window) {
+    float baseSpeed = 5.0f;
+    float speedMultiplier = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ? 3.0f : 1.0f;
+    float cameraSpeed = static_cast<float>(baseSpeed * speedMultiplier * deltaTime);
+
+    // Forward and backward
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         cameraPos += cameraSpeed * cameraFront;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         cameraPos -= cameraSpeed * cameraFront;
+
+    // Left and right
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+
+    // Up and down
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        cameraPos += cameraSpeed * cameraUp;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+        cameraPos -= cameraSpeed * cameraUp;
 }
+

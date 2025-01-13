@@ -16,6 +16,7 @@
 
 #include "Biomes.h"
 #include "Chunk.h"
+#include "Mobs/steve.h"
 
 double lastTime = 0.0;
 int frameCount = 0;
@@ -89,6 +90,8 @@ int main()
     chunks.push_back(Chunk::Chunk(glm::vec3(48.0f, 0.0f, 64.0f), Biomes::hillyBiome));
     chunks.push_back(Chunk::Chunk(glm::vec3(64.0f, 0.0f, 64.0f), Biomes::mountainousBiome));
 
+    Steve steve = Steve(glm::vec3(0.0f, 60.0f, 0.0f));
+
     // render loop
     while (!glfwWindowShouldClose(window))
     {
@@ -102,6 +105,8 @@ int main()
         for (auto& chunk : chunks) {
             chunk.RenderChunk();
         }
+
+        steve.Render();
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         glfwSwapBuffers(window);
