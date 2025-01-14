@@ -4,6 +4,7 @@ This repository contains the source code for a terrain-based prototype inspired 
 
 ## Video Walkthrough
 
+https://youtu.be/Hk4ZPrVGvnc
 
 ## Dependencies
 
