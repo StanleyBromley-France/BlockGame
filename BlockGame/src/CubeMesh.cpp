@@ -1,7 +1,7 @@
 #include "CubeMesh.h"
 
 // sets up cube model class, called first time getInstance is run
-CubeMesh::CubeMesh() : Shader("shaders/vertex_shader.glsl", "shaders/frag_single_texture.glsl")
+CubeMesh::CubeMesh() : ShaderSingle("shaders/vertex_shader.glsl", "shaders/frag_single_texture.glsl"), ShaderMixed("shaders/vertex_shader.glsl", "shaders/fragment_shader.glsl")
 {
     float vertices[] = {
         // Positions          // Texture Coords
@@ -67,20 +67,27 @@ CubeMesh::CubeMesh() : Shader("shaders/vertex_shader.glsl", "shaders/frag_single
 
     //unsigned int texture2 = GladHelper::loadTexture("awesomeface.png", false);
 
-    Shader.use();
-    Shader.SetInt("texture1", 0); // assigns texture1 to texture unit 0
-    //Shader.SetInt("texture2", 1); // assigns texture2 to texture unit 1
+    ShaderSingle.use();
+    ShaderSingle.SetInt("texture1", 0); // assigns texture1 to texture unit 0
 
-    // binds textures on corresponding texture units
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, sandTexture);
-    //glActiveTexture(GL_TEXTURE1);
-    //glBindTexture(GL_TEXTURE_2D, texture2);
+
+    ShaderMixed.use();
+    ShaderMixed.SetInt("texture1", 0); // assigns texture1 to texture unit 0
+    ShaderMixed.SetInt("texture2", 1); // assigns texture1 to texture unit 0
+
+    ShaderMixed.use();
+    glBindTexture(GL_TEXTURE_2D, dirtTexture); // GL_TEXTURE0
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, sandTexture); // GL_TEXTURE1
+
 }
 
-Shader& CubeMesh::GetShader() 
+Shader& CubeMesh::GetShader(Texture texture)
 {
-    return Shader;
+    if(texture != Texture::STONE)
+        return ShaderSingle;
+
+    return ShaderMixed;
 }
 
 GladHelper::MeshBuffers& CubeMesh::GetMeshBuffers()
@@ -90,20 +97,26 @@ GladHelper::MeshBuffers& CubeMesh::GetMeshBuffers()
 
 void CubeMesh::SwitchTexture(Texture texture)
 {
-    Shader.use();
 
-    glActiveTexture(GL_TEXTURE0);
 
     switch (texture)
     {
     case Texture::SAND:
+        ShaderSingle.use();
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, sandTexture);
         break;
     case Texture::DIRT:
+        ShaderMixed.use();
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, dirtTexture);
         break;
     case Texture::STONE:
+        ShaderMixed.use();
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, stoneTexture);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, dirtTexture);
         break;
     }
 }

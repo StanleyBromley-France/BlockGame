@@ -9,9 +9,6 @@ class CubeMesh
 public:
     CubeMesh();
 
-    Shader& GetShader();
-    GladHelper::MeshBuffers& GetMeshBuffers();
-
     enum class Texture
     {
         SAND,
@@ -19,10 +16,15 @@ public:
         STONE
     };
 
+    Shader& GetShader(Texture texture);
+    GladHelper::MeshBuffers& GetMeshBuffers();
+
+
     void SwitchTexture(Texture texture);
 
 private:
-    Shader Shader;
+    Shader ShaderSingle;
+    Shader ShaderMixed;
     GladHelper::MeshBuffers MeshBuffers;
 
     unsigned int sandTexture;

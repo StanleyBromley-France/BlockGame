@@ -75,7 +75,7 @@ void Chunk::RenderChunk()
 
     glBindVertexArray(Mesh.GetMeshBuffers().getVAO());
 
-    Shader& shader = Mesh.GetShader();
+    Shader& shader = Mesh.GetShader(currentBiome.texture);
 
     // activates shader
     shader.use();
