@@ -17,6 +17,14 @@ This project uses the following dependencies:
 
 Ensure these dependencies are installed before running the project.
 
+## Game Controls
+
+- WASD to move around
+- Mouse movement to look around
+- Hold shift to speed up movement
+- Space bar moves up
+- Left control moves down
+- Scroll to zoom in/out
 
 ## Game Mechanics
 
