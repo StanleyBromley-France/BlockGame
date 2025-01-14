@@ -3,16 +3,15 @@
 
 #include <map>
 #include <vector>
+#include <FastNoiseLite.h>
 
 #include "CubeInstance.h"
 #include "Biomes.h"
 #include "GladHelper.h"
 
-
-
 class Chunk {
 public:
-	Chunk(glm::vec3 position, Biomes::Biome currentBiome);
+	Chunk(glm::vec3 position, Biomes::Biome currentBiome, FastNoiseLite noise);
 	void RenderChunk();
 	void Deallocate();
 private:

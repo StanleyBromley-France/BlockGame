@@ -1,17 +1,11 @@
 #include "Chunk.h"
 
-#include <FastNoiseLite.h>
 #include <algorithm>
 #include <cstdlib>
 
-Chunk::Chunk(glm::vec3 position, Biomes::Biome currentBiome) : chunkPos(position), currentBiome(currentBiome){
+Chunk::Chunk(glm::vec3 position, Biomes::Biome currentBiome, FastNoiseLite noise) : chunkPos(position), currentBiome(currentBiome){
     const float spacing = 1.0f;
 
-    // Create and configure the noise generator
-    FastNoiseLite noise;
-    noise.SetNoiseType(FastNoiseLite::NoiseType_Perlin);  // Choose the noise type
-    noise.SetFrequency(0.1f);  // Adjusts the frequency for the smoothness of the noise
-    noise.SetSeed((rand() % 1000 + 1));  // Sets a seed for reproducibility
 
     // Dynamically allocate the cubes array on the heap
     cubes = new CubeInstance * *[chunkSize];
@@ -22,12 +16,11 @@ Chunk::Chunk(glm::vec3 position, Biomes::Biome currentBiome) : chunkPos(position
         }
     }
 
-
     // Initialises the cubes with positions and random heights
     for (int x = 0; x < chunkSize; ++x) {
         for (int z = 0; z < chunkSize; ++z) {
             // Generates a noise value for this (x, z) coordinate
-            float noiseValue = noise.GetNoise(x * currentBiome.noiseScale, z * currentBiome.noiseScale);
+            float noiseValue = noise.GetNoise((x + chunkPos.x) * currentBiome.noiseScale, (z + chunkPos.z) * currentBiome.noiseScale);
 
             // Maps noise value from [-1, 1] to [0, 5] for height
             int height = static_cast<int>((noiseValue + 1.0f) * currentBiome.heightScale);

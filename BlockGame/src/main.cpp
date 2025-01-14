@@ -15,7 +15,7 @@
 #include <vector>
 
 #include "Biomes.h"
-#include "Chunk.h"
+#include "map.h"
 #include "Mobs/steve.h"
 #include "Mobs/pig.h"
 
@@ -54,43 +54,9 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
+    unsigned int randomSeed = static_cast<unsigned int>(std::time(nullptr));
 
-    std::vector<Chunk> chunks;
-
-    // Row 1
-    chunks.push_back(Chunk::Chunk(glm::vec3(0.0f, 0.0f, 0.0f), Biomes::desertBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(16.0f, 0.0f, 0.0f), Biomes::hillyBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(32.0f, 0.0f, 0.0f), Biomes::mountainousBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(48.0f, 0.0f, 0.0f), Biomes::desertBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(64.0f, 0.0f, 0.0f), Biomes::hillyBiome));
-
-    // Row 2
-    chunks.push_back(Chunk::Chunk(glm::vec3(0.0f, 0.0f, 16.0f), Biomes::hillyBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(16.0f, 0.0f, 16.0f), Biomes::mountainousBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(32.0f, 0.0f, 16.0f), Biomes::desertBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(48.0f, 0.0f, 16.0f), Biomes::hillyBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(64.0f, 0.0f, 16.0f), Biomes::mountainousBiome));
-
-    // Row 3
-    chunks.push_back(Chunk::Chunk(glm::vec3(0.0f, 0.0f, 32.0f), Biomes::mountainousBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(16.0f, 0.0f, 32.0f), Biomes::desertBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(32.0f, 0.0f, 32.0f), Biomes::hillyBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(48.0f, 0.0f, 32.0f), Biomes::mountainousBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(64.0f, 0.0f, 32.0f), Biomes::desertBiome));
-
-    // Row 4
-    chunks.push_back(Chunk::Chunk(glm::vec3(0.0f, 0.0f, 48.0f), Biomes::desertBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(16.0f, 0.0f, 48.0f), Biomes::hillyBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(32.0f, 0.0f, 48.0f), Biomes::mountainousBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(48.0f, 0.0f, 48.0f), Biomes::desertBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(64.0f, 0.0f, 48.0f), Biomes::hillyBiome));
-
-    // Row 5
-    chunks.push_back(Chunk::Chunk(glm::vec3(0.0f, 0.0f, 64.0f), Biomes::hillyBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(16.0f, 0.0f, 64.0f), Biomes::mountainousBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(32.0f, 0.0f, 64.0f), Biomes::desertBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(48.0f, 0.0f, 64.0f), Biomes::hillyBiome));
-    chunks.push_back(Chunk::Chunk(glm::vec3(64.0f, 0.0f, 64.0f), Biomes::mountainousBiome));
+    Map map = Map(10, 10, randomSeed);
 
     Steve steve = Steve(glm::vec3(3.0f, 6.0f, 2.0f));
     Pig pig = Pig(glm::vec3(6.0f, 4.5f, 10.0f));
@@ -106,7 +72,7 @@ int main()
 
         GladHelper::ClearScreen();
 
-        for (auto& chunk : chunks) {
+        for (auto& chunk : map.chunks) {
             chunk.RenderChunk();
         }
 
@@ -120,7 +86,7 @@ int main()
         calculateFPS(window);
     }
 
-    for (auto& chunk : chunks) {
+    for (auto& chunk : map.chunks) {
         chunk.Deallocate();
     }
 
