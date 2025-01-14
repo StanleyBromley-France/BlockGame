@@ -16,21 +16,30 @@ Pig::Pig(const glm::vec3& position) : position(position) {
 void Pig::Render() {
     shader->use();
 
-    // pass projection matrix to shader
+    // Pass projection matrix to shader
     shader->SetMat4("projection", GLFWHelper::Projection());
 
-    // camera/view transformation
+    // Camera/view transformation
     glm::mat4 view = glm::mat4(1.0f);
     view = GLFWHelper::LookAt();
     shader->SetMat4("view", view);
 
+    // Model transformation
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, position); // translates model to given position
-    model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));	// resizes model
+
+    // Apply rotation based on time for spinning effect
+    float time = static_cast<float>(glfwGetTime()); // Get elapsed time in seconds
+    model = glm::rotate(model, glm::radians(time * 100.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // Spins around the Y-axis
+
+    model = glm::translate(model, position); // Translate model to given position
+    model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f)); // Resize model
+
     shader->SetMat4("model", model);
 
     importedModel->Draw(*shader);
 }
+
+
 
 // getter for position
 glm::vec3 Pig::GetPosition() {
