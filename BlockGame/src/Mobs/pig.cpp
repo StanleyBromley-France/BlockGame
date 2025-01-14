@@ -1,19 +1,19 @@
-#include "steve.h"
+#include "pig.h"
 
 #include "../GLFWHelper.h"
 
-ImportedModel* Steve::importedModel = nullptr;
-Shader* Steve::shader = nullptr;
+ImportedModel* Pig::importedModel = nullptr;
+Shader* Pig::shader = nullptr;
 
 // Constructor
-Steve::Steve(const glm::vec3& position) : position(position) {
+Pig::Pig(const glm::vec3& position) : position(position) {
     if (!importedModel || !shader) {
         LoadResources(); // loads the model and shader if not already loaded
     }
 }
 
 // Render the zombie
-void Steve::Render() {
+void Pig::Render() {
     shader->use();
 
     // pass projection matrix to shader
@@ -26,21 +26,21 @@ void Steve::Render() {
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, position); // translates model to given position
-    model = glm::scale(model, glm::vec3(.10f, .10f, .10f));	// resizes model
-    shader->SetMat4("model",model);
+    model = glm::scale(model, glm::vec3(1.5f, 1.5f, 1.5f));	// resizes model
+    shader->SetMat4("model", model);
 
     importedModel->Draw(*shader);
 }
 
 // getter for position
-glm::vec3 Steve::GetPosition() {
+glm::vec3 Pig::GetPosition() {
     return position;
 }
 
 // loads the static model and shader resources
-void Steve::LoadResources() {
+void Pig::LoadResources() {
     if (!importedModel) {
-        importedModel = new ImportedModel("objects/steve/steve.obj", true);
+        importedModel = new ImportedModel("objects/pig/pig.glb");
     }
     if (!shader) {
         shader = new Shader("shaders/model_import_vertex.glsl", "shaders/model_import_frag.glsl");

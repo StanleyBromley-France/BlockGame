@@ -1,9 +1,14 @@
 #include "Model.h"
 #include <iostream>
 
-ImportedModel::ImportedModel(const std::string& path, bool gamma) : gammaCorrection(gamma)
+ImportedModel::ImportedModel(const std::string& path, bool flipOnLoad, bool gamma)
+    : gammaCorrection(gamma)
 {
+    stbi_set_flip_vertically_on_load(flipOnLoad); // sets flipping based on parameter
     loadModel(path);
+    stbi_set_flip_vertically_on_load(false); // resets flipping state
+
+
 }
 
 void ImportedModel::Draw(Shader& shader)
@@ -114,27 +119,65 @@ Mesh ImportedModel::processMesh(aiMesh* mesh, const aiScene* scene)
         }
     }
 
+    // Check if this texture is embedded in the .glb file
+    const aiTexture* embeddedTexture = scene->GetEmbeddedTexture("*0");
+    if (embeddedTexture)
+    {
+        // Handle embedded texture loading
+        Texture texture;
+        texture.id = LoadEmbeddedTexture(embeddedTexture);  // Use new method for embedded textures
+        texture.type = aiTextureType_DIFFUSE;
+        texture.path = "*0";
+        textures.push_back(texture);
+        textures_loaded.push_back(texture);
+    }
+
+    const aiTexture* embeddedTexture2 = scene->GetEmbeddedTexture("*1");
+    if (embeddedTexture2)
+    {
+        // Handle embedded texture loading
+        Texture texture;
+        texture.id = LoadEmbeddedTexture(embeddedTexture2);  // Use new method for embedded textures
+        texture.type = aiTextureType_DIFFUSE;
+        texture.path = "*1";
+        textures.push_back(texture);
+        textures_loaded.push_back(texture);
+    }
+
+    const aiTexture* embeddedTexture3 = scene->GetEmbeddedTexture("*2");
+    if (embeddedTexture3)
+    {
+        // Handle embedded texture loading
+        Texture texture;
+        texture.id = LoadEmbeddedTexture(embeddedTexture3);  // Use new method for embedded textures
+        texture.type = aiTextureType_SPECULAR;
+        texture.path = "*1";
+        textures.push_back(texture);
+        textures_loaded.push_back(texture);
+    }
+
     // processes materials and load textures for the mesh
     aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-    std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+    std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse", scene);
     textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
 
     // loads other types of textures (specular, normal, height)
-    std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+    std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular", scene);
     textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
 
-    std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
+    std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal", scene);
     textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
 
-    std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
+    std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height", scene);
     textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
     // returns the created mesh object
     return Mesh(vertices, indices, textures);
 }
 
+
 // loads material textures from the material object and checks for duplicates
-std::vector<Texture> ImportedModel::loadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName)
+std::vector<Texture> ImportedModel::loadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName, const aiScene* scene)
 {
     std::vector<Texture> textures;
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
@@ -193,7 +236,7 @@ unsigned int ImportedModel::TextureFromFile(const char* path, const std::string&
         // sets texture parameters
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        // uses nearest neighbour filtering for both minification and magnification
+        // use nearest neighbour filtering for both minification and magnification
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -202,6 +245,47 @@ unsigned int ImportedModel::TextureFromFile(const char* path, const std::string&
     else
     {
         std::cout << "ERROR::TEXTURE::FAILED_TO_LOAD_TEXTURE::" << path << std::endl;
+        stbi_image_free(data);
+    }
+
+    return textureID;
+}
+
+unsigned int ImportedModel::LoadEmbeddedTexture(const aiTexture* embeddedTexture)
+{
+    // Create a texture from the embedded texture's data
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+
+    // Get the texture data (Assimp stores it as a byte buffer)
+    const aiTexture* texture = embeddedTexture;
+    const void* textureData = texture->pcData;
+    unsigned int textureSize = texture->mWidth; // Size is stored in mWidth for embedded textures
+
+    int width, height, nrComponents;
+
+    // If it's an embedded texture, we assume it's PNG or JPEG, so use stb_image to load it
+    unsigned char* data = stbi_load_from_memory(static_cast<const unsigned char*>(textureData), textureSize, &width, &height, &nrComponents, 0);
+
+    if (data)
+    {
+        GLenum format = (nrComponents == 1) ? GL_RED : (nrComponents == 3) ? GL_RGB : GL_RGBA;
+
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        // sets texture parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        stbi_image_free(data);
+    }
+    else
+    {
+        std::cout << "ERROR::TEXTURE::FAILED_TO_LOAD_EMBEDDED_TEXTURE" << std::endl;
         stbi_image_free(data);
     }
 

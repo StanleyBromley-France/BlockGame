@@ -144,6 +144,7 @@
     <ClCompile Include="src\GLFWHelper.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
+    <ClCompile Include="src\Mobs\pig.cpp" />
     <ClCompile Include="src\Mobs\steve.cpp" />
     <ClCompile Include="src\Model.cpp" />
     <ClCompile Include="stb.cpp" />
@@ -537,6 +538,7 @@
     <ClInclude Include="src\CubeMesh.h" />
     <ClInclude Include="src\GladHelper.h" />
     <ClInclude Include="src\Mesh.h" />
+    <ClInclude Include="src\Mobs\pig.h" />
     <ClInclude Include="src\Model.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\GLFWHelper.h" />

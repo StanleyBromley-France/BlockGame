@@ -51,6 +51,9 @@
     <ClCompile Include="src\Mobs\steve.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Mobs\pig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dependencies\include\glad\glad.h">
@@ -1227,6 +1230,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Mobs\steve.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Mobs\pig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

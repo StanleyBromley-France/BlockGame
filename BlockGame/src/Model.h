@@ -21,7 +21,7 @@
 class ImportedModel
 {
 public:
-    ImportedModel(const std::string& path, bool gamma = false);
+    ImportedModel(const std::string& path, bool flipOnLoad = false, bool gamma = false);
 
     void Draw(Shader& shader);
 
@@ -32,9 +32,11 @@ private:
 
     Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 
-    std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName);
+    std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, const std::string& typeName, const aiScene* scene);
 
     unsigned int TextureFromFile(const char* path, const std::string& directory, bool gamma = false);
+
+    unsigned int LoadEmbeddedTexture(const aiTexture* embeddedTexture);
 
     std::vector<Texture> textures_loaded;
 
